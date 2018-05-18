@@ -8,3 +8,13 @@
 
 import Foundation
 import CoreData
+import UIKit
+import MapKit
+
+class PhotoAlbumViewController: UIViewController, UICollectionViewDelegate{
+    
+    var dataController: DataController!
+    
+    
+    
+}

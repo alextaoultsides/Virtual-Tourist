@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D43767C620ADF29800925F88 /* FlickrPhotoDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43767C520ADF29800925F88 /* FlickrPhotoDownloader.swift */; };
+		D43767C820AE799200925F88 /* GCDBlackbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43767C720AE799200925F88 /* GCDBlackbox.swift */; };
 		D480467E20ABE5E0004B5ABE /* VirtualTourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D480467C20ABE5E0004B5ABE /* VirtualTourist.xcdatamodeld */; };
 		D49147DD20AA34560037DF5B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49147DC20AA34560037DF5B /* AppDelegate.swift */; };
 		D49147DF20AA34560037DF5B /* TravelLocationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49147DE20AA34560037DF5B /* TravelLocationsViewController.swift */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D43767C520ADF29800925F88 /* FlickrPhotoDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlickrPhotoDownloader.swift; sourceTree = "<group>"; };
+		D43767C720AE799200925F88 /* GCDBlackbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDBlackbox.swift; sourceTree = "<group>"; };
 		D480467D20ABE5E0004B5ABE /* VirtualTourist.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = VirtualTourist.xcdatamodel; sourceTree = "<group>"; };
 		D49147D920AA34560037DF5B /* Virtual Tourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Virtual Tourist.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D49147DC20AA34560037DF5B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				D49147DC20AA34560037DF5B /* AppDelegate.swift */,
+				D43767C720AE799200925F88 /* GCDBlackbox.swift */,
 				D49147F120AA34A80037DF5B /* Model */,
 				D49147F220AA34B50037DF5B /* View */,
 				D49147F320AA34BC0037DF5B /* Controllers */,
@@ -77,6 +82,7 @@
 			children = (
 				D49147F620AB5D960037DF5B /* DataController.swift */,
 				D480467C20ABE5E0004B5ABE /* VirtualTourist.xcdatamodeld */,
+				D43767C520ADF29800925F88 /* FlickrPhotoDownloader.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -169,11 +175,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D43767C620ADF29800925F88 /* FlickrPhotoDownloader.swift in Sources */,
 				D49147F720AB5D960037DF5B /* DataController.swift in Sources */,
 				D480467E20ABE5E0004B5ABE /* VirtualTourist.xcdatamodeld in Sources */,
 				D49147DF20AA34560037DF5B /* TravelLocationsViewController.swift in Sources */,
 				D49147DD20AA34560037DF5B /* AppDelegate.swift in Sources */,
 				D49147F520AA3B2F0037DF5B /* PhotoAlbumViewController.swift in Sources */,
+				D43767C820AE799200925F88 /* GCDBlackbox.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

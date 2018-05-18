@@ -59,6 +59,11 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         pin.longitude = Double(newCoordinate.longitude)
         print("\(pin.latitude) \(pin.longitude)")
         try? dataController.viewContext.save()
+        
+        FlickrPhotoDownloader().imageFromURL(latitude: pin.latitude, longitude: pin.longitude) { (result, error) in
+            
+            print(result?.count)
+        }
     }
     
     func loadPins() {
