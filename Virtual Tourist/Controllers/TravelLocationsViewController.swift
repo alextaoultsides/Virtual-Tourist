@@ -16,23 +16,57 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
     
     var dataController: DataController!
     var fetchedResultsController:NSFetchedResultsController<Pin>!
-    
+    var lastMap: Bool = false
     var maxTouchValue: CGFloat = CGFloat.init()
+    var imageData = ImageData()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
+        
+        if lastMap == true {
+            mapView.region = getLastMapView()
+        }else {
+            lastMap = UserDefaults.standard.bool(forKey: "lastMap")
+        }
+        
         setUpFetchedResultsController()
         loadPins()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadPins()
+        setUpFetchedResultsController()
+        if lastMap == true {
+            mapView.region = getLastMapView()
+        }else {
+            lastMap = UserDefaults.standard.bool(forKey: "lastMap")
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        fetchedResultsController = nil
+    }
+    
+    func getLastMapView() -> MKCoordinateRegion{
+        var mapRegion = MKCoordinateRegion()
+        mapRegion.center.latitude = UserDefaults.standard.double(forKey: "mapCenterLatitude")
+        mapRegion.center.longitude = UserDefaults.standard.double(forKey: "mapCenterLongitude")
+        mapRegion.span.latitudeDelta = UserDefaults.standard.double(forKey: "mapCenterLatitudeDelta")
+        mapRegion.span.longitudeDelta = UserDefaults.standard.double(forKey: "mapCenterLongitudeDelta")
+        
+        return mapRegion
+        
+    }
+    
+    func setLastMapView() {
+        UserDefaults.standard.set(true, forKey: "lastMap")
+        UserDefaults.standard.set(mapView.centerCoordinate.latitude,forKey: "mapCenterLatitude")
+        UserDefaults.standard.set(mapView.centerCoordinate.longitude,forKey: "mapCenterLongitude")
+        UserDefaults.standard.set(mapView.region.span.latitudeDelta,forKey: "mapCenterLatitudeDelta")
+        UserDefaults.standard.set(mapView.region.span.longitudeDelta,forKey: "mapCenterLongitudeDelta")
+        UserDefaults.standard.synchronize()
     }
     
     func setUpFetchedResultsController() {
@@ -53,17 +87,16 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         let newCoordinate = mapView.convert(pinPoint, toCoordinateFrom: mapView)
         let annotation = MKPointAnnotation()
         annotation.coordinate = newCoordinate
-        mapView.addAnnotation(annotation)
+        
         let pin = Pin(context: dataController.viewContext)
         pin.latitude = Double(newCoordinate.latitude)
         pin.longitude = Double(newCoordinate.longitude)
-        print("\(pin.latitude) \(pin.longitude)")
+        pin.creationDate = Date()
+        
+        annotation.title = String(describing: pin.creationDate)
+        mapView.addAnnotation(annotation)
         try? dataController.viewContext.save()
         
-        FlickrPhotoDownloader().imageFromURL(latitude: pin.latitude, longitude: pin.longitude) { (result, error) in
-            
-            print(result?.count)
-        }
     }
     
     func loadPins() {
@@ -71,10 +104,13 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         for i in fetchedResultsController.fetchedObjects! {
             let annotation = MKPointAnnotation()
             annotation.coordinate = CLLocationCoordinate2D.init(latitude: i.latitude, longitude: i.longitude)
-            print("\(annotation.coordinate)")
-            mapView.addAnnotation(annotation)
+            annotation.title = String(describing: i.creationDate)
+            //print("\(annotation.coordinate)")
+            
+            performUIUpdatesOnMain {
+                self.mapView.addAnnotation(annotation)
+            }
         }
-       
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -112,26 +148,56 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.canShowCallout = true
+            pinView!.canShowCallout = false
             pinView!.pinTintColor = .red
-            pinView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+            pinView!.rightCalloutAccessoryView?.isHidden = true
             pinView?.animatesDrop = true
         }
         else {
             pinView!.annotation = annotation
         }
-        
         return pinView
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        print("okwhatever")
-        print(mapView.centerCoordinate)
+        setLastMapView()
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
+        if let annotationView = view.annotation?.title {
+            let controller = storyboard!.instantiateViewController(withIdentifier: "albumView") as! PhotoAlbumViewController
+
+            for i in fetchedResultsController.fetchedObjects! {
+                if (view.annotation?.title)! == String(describing: i.creationDate) {
+                    controller.pin = i
+                    print("firstpin\(i.creationDate)")
+                    if controller.pin.photos == nil {
+                        controller.loadNewPictures()
+                    }
+                }
+            }
+            controller.dataController = dataController
+            present(controller, animated: true)
+        }
     }
 }
 
-
 extension TravelLocationViewController:NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    }
     
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            return
+        case .delete:
+            return
+        default:
+            break
+        }
+    }
 }

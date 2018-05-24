@@ -12,4 +12,9 @@ import UIKit
 class PhotoCell: UICollectionViewCell {
     
     @IBOutlet weak var photoImage: UIImageView!
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        photoImage.image = #imageLiteral(resourceName: "VirtualTourist_152")
+    }
 }

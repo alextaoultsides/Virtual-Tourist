@@ -7,3 +7,15 @@
 //
 
 import Foundation
+
+class ImageData: NSObject{
+    
+    var imageDataArray: [Data] = []
+    
+    class func sharedInstance() -> ImageData {
+        struct Singleton {
+            static var sharedInstance = ImageData()
+        }
+        return Singleton.sharedInstance
+    }
+}
