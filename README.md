@@ -20,3 +20,5 @@ Open Virtual Tourist in xcode 9.0 or higher and Run the app
 
 Press OK in top left corner to return to map
 
+#### Photos are downloaded from Flickr using their API
+https://www.flickr.com/services/api/
