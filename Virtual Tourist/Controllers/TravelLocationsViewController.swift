@@ -18,8 +18,8 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
     var fetchedResultsController:NSFetchedResultsController<Pin>!
     var lastMap: Bool = false
     var maxTouchValue: CGFloat = CGFloat.init()
-    var imageData = ImageData()
     
+    //MARK: View Override Functions
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
@@ -49,6 +49,7 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         fetchedResultsController = nil
     }
     
+    //Gets Map data from User Defaults
     func getLastMapView() -> MKCoordinateRegion{
         var mapRegion = MKCoordinateRegion()
         mapRegion.center.latitude = UserDefaults.standard.double(forKey: "mapCenterLatitude")
@@ -60,6 +61,7 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         
     }
     
+    //Saves MapView Data to User Defaults
     func setLastMapView() {
         UserDefaults.standard.set(true, forKey: "lastMap")
         UserDefaults.standard.set(mapView.centerCoordinate.latitude,forKey: "mapCenterLatitude")
@@ -69,6 +71,7 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         UserDefaults.standard.synchronize()
     }
     
+    //MARK: Fetch Controller Set Up
     func setUpFetchedResultsController() {
         let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
         let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: false)
@@ -82,7 +85,8 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
             fatalError("The Fetch Could Not Be Performed: \(error.localizedDescription)")
         }
     }
-
+    
+    //MARK: Create and add pin to Context View
     func addPin(_ pinPoint: CGPoint) {
         let newCoordinate = mapView.convert(pinPoint, toCoordinateFrom: mapView)
         let annotation = MKPointAnnotation()
@@ -99,20 +103,21 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         
     }
     
+    //MARK: Places saved Pins on map
     func loadPins() {
         
         for i in fetchedResultsController.fetchedObjects! {
             let annotation = MKPointAnnotation()
             annotation.coordinate = CLLocationCoordinate2D.init(latitude: i.latitude, longitude: i.longitude)
             annotation.title = String(describing: i.creationDate)
-            //print("\(annotation.coordinate)")
             
             performUIUpdatesOnMain {
                 self.mapView.addAnnotation(annotation)
             }
         }
     }
-
+    
+    //MARK: Force Touch Detection
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         maxTouchValue = 0.0
     }
@@ -132,6 +137,7 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
+    //MARK: Sets pin after long press
     @IBAction func setPin(_ gestureRecognizer: UILongPressGestureRecognizer){
         
         if gestureRecognizer.state == .began {
@@ -140,6 +146,7 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
+    //MARK Map View Delegate
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         let reuseId = "pin"
@@ -171,7 +178,6 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
             for i in fetchedResultsController.fetchedObjects! {
                 if (view.annotation?.title)! == String(describing: i.creationDate) {
                     controller.pin = i
-                    print("firstpin\(i.creationDate)")
                     if controller.pin.photos == nil {
                         controller.loadNewPictures()
                     }
@@ -182,14 +188,9 @@ class TravelLocationViewController: UIViewController, MKMapViewDelegate {
         }
     }
 }
-
+//MARK: Fetch Results Controller Delegate
 extension TravelLocationViewController:NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    }
-    
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-    }
-    
+
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
         case .insert:

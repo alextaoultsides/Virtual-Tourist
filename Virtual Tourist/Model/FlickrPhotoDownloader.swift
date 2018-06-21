@@ -28,7 +28,7 @@ class FlickrPhotoDownloader: NSObject {
         let task = session.dataTask(with: request) { (data, response, error) in
             
             if error != nil {
-                print("error")
+                
                 completion(nil, error as NSError?)
             }
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
@@ -46,13 +46,13 @@ class FlickrPhotoDownloader: NSObject {
         }
         task.resume()
     }
+    //MARK: Download images from Flickr
     func imagesFromURL(latitude: Double, longitude: Double, completion: @escaping(_ results: Data?, _ error: NSError?, _ finishedLoading: Bool?) -> Void ) {
         let finished = true
         
         FlickrPhotoDownloader().searchFlickrByLatLong(latitude: latitude, longitude: longitude) { (result, error) in
             
             if error != nil {
-                print("ok")
                 completion(nil, error, nil)
             } else {
                 
@@ -61,7 +61,7 @@ class FlickrPhotoDownloader: NSObject {
                 if let pagesTotal = results!["pages"]{
                     
                     if Int(truncating: pagesTotal as! NSNumber) < 1{
-                        completion(nil, error, nil)
+                        completion(nil, NSError.init(domain: "No Photos Found", code: 1), nil)
                     } else {
                     let randomPage = Int(arc4random_uniform(UInt32( pagesTotal as! Double))) + 1
                    
@@ -98,6 +98,7 @@ class FlickrPhotoDownloader: NSObject {
             }
         }
     }
+    //Convert to JSON
     func convertDataWithCompletion(_ data: Data, completion: (_ result: AnyObject?, _ error: NSError?) -> Void) {
         
         var parsedResult: AnyObject! = nil
