@@ -12,7 +12,7 @@ import UIKit
 class FlickrPhotoDownloader: NSObject {
     let session = URLSession.shared
     
-    let apiKey = "fcbce5f0c0d654abadee950a053e1dad"
+    let apiKey = "your own"
     
     // search method for Flickr download by lat and long
     func searchFlickrByLatLong(latitude: Double, longitude: Double, withPageNumber: Int? = nil, completion: @escaping(_ result: AnyObject?, _ error: NSError?) -> Void){
